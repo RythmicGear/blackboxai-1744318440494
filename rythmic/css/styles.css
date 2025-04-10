@@ -1,0 +1,220 @@
+/* Base theme colors */
+:root {
+    --bg-primary: #0F172A;
+    --bg-secondary: #1E293B;
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --accent-color: #3B82F6;
+    --card-bg: #1E293B;
+    --card-hover: #2D3B4F;
+}
+
+/* Base styles */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card styles */
+.news-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.news-card:hover {
+    transform: translateY(-4px);
+    background-color: var(--card-hover);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Card styles */
+.news-card {
+    background-color: var(--card-bg);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Dynamic card sizes */
+.card-sm { 
+    height: 200px;
+}
+.card-md { 
+    height: 250px;
+}
+.card-lg { 
+    height: 300px;
+}
+
+/* Ad spaces */
+.ad-space {
+    background: linear-gradient(45deg, var(--bg-secondary), var(--card-bg));
+    border: 2px dashed var(--text-secondary);
+    padding: 1.25rem;
+    text-align: center;
+    border-radius: 1rem;
+}
+
+
+/* Fun elements */
+.genre-icon {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+}
+
+.news-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+.news-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* No-image card style */
+.no-image-card {
+    background: linear-gradient(135deg, var(--accent), #4f46e5);
+    color: white;
+    padding: 2rem;
+}
+
+.no-image-card .emoji-background {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    font-size: 4rem;
+    opacity: 0.2;
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.loading-pulse {
+    animation: pulse 1.5s infinite;
+}
+
+/* Responsive grid */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .news-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .news-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+/* Card sizes */
+.card-sm { 
+    height: 280px;
+}
+.card-md { 
+    height: 320px;
+}
+.card-lg { 
+    height: 360px;
+}
+
+/* Genre and country dropdowns */
+.filter-dropdown {
+    position: relative;
+    cursor: pointer;
+}
+
+.filter-dropdown select {
+    appearance: none;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 1px solid var(--text-secondary);
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.filter-dropdown::after {
+    content: '📑';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Search bar */
+.search-bar {
+    position: relative;
+    flex-grow: 1;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--text-secondary);
+    border-radius: 0.5rem;
+}
+
+.search-bar::before {
+    content: '🔍';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Google Sign In button */
+.google-signin {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.google-signin:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.google-signin img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
