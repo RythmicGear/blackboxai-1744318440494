@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <style>
+    .logo-text { font-family: 'Arcade Gamer', sans-serif; font-size: 40px; fill: currentColor; }
+    .logo-accent { fill: #3B82F6; }
+  </style>
+  <text x="10" y="40" class="logo-text">RYTHMIC</text>
+  <circle cx="180" cy="25" r="15" class="logo-accent" opacity="0.8"/>
+</svg>
