@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RYTHMIC - A modern news aggregator with global coverage">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="RYTHMIC">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/icon-base.svg">
+    <link rel="apple-touch-icon" href="assets/images/icon-base.svg">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.cdnfonts.com/css/arcade-gamer" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/norwester" rel="stylesheet">
+                
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        arcade: ['"Arcade Gamer"', 'sans-serif'],
+                        norwester: ['Norwester', 'sans-serif'],
+                    },
+                    typography: theme => ({
+                        DEFAULT: {
+                            css: {
+                                maxWidth: 'none',
+                                color: theme('colors.gray.900'),
+                                img: {
+                                    marginTop: '1.5em',
+                                    marginBottom: '1.5em',
+                                },
+                            },
+                        },
+                        dark: {
+                            css: {
+                                color: theme('colors.gray.100'),
+                                a: {
+                                    color: theme('colors.blue.400'),
+                                },
+                                strong: {
+                                    color: theme('colors.gray.100'),
+                                },
+                                h1: {
+                                    color: theme('colors.gray.100'),
+                                },
+                                h2: {
+                                    color: theme('colors.gray.100'),
+                                },
+                                h3: {
+                                    color: theme('colors.gray.100'),
+                                },
+                                h4: {
+                                    color: theme('colors.gray.100'),
+                                },
+                                code: {
+                                    color: theme('colors.gray.100'),
+                                },
+                                blockquote: {
+                                    color: theme('colors.gray.100'),
+                                },
+                            },
+                        },
+                    }),
+                }
+            }
+        }
+    </script>
+    
+    <title>RYTHMIC News</title>
+</head>
+<body class="bg-gray-900 text-white dark" data-theme="dark">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-md">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <img src="assets/images/logo.svg" alt="RYTHMIC" class="h-8 text-white" />
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="user-info" class="hidden"></div>
+                    <button id="auth-button" onclick="initGoogleAuth()" class="google-signin bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                        <img src="https://www.google.com/favicon.ico" alt="Google" class="w-6 h-6">
+                    </button>
+                    <button id="install-button" class="hidden bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        Install App
+                    </button>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-400 flex items-center gap-4">
+                <span id="currentDate" class="flex items-center gap-2">📅</span>
+                <span class="flex items-center gap-2">⏰ Next Update: <span id="nextUpdate"></span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex flex-wrap gap-4">
+            <div class="filter-dropdown">
+                <select id="genre" class="bg-gray-800 border-gray-700 text-gray-200 rounded px-3 py-2">
+                    <option value="all">All Genres</option>
+                </select>
+            </div>
+            <div class="filter-dropdown">
+                <select id="country" class="bg-gray-800 border-gray-700 text-gray-200 rounded px-3 py-2">
+                    <option value="all">All Countries</option>
+                </select>
+            </div>
+            <div class="search-bar">
+                <input type="search" id="search" placeholder="Search news..." 
+                    class="bg-gray-800 border-gray-700 text-gray-200 rounded px-3 py-2 w-full placeholder-gray-500">
+            </div>
+        </div>
+    </div>
+
+    <!-- News Grid -->
+    <main class="container mx-auto px-4 py-8">
+        <div id="newsGrid" class="news-grid">
+            <!-- News cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Service Worker and PWA Installation -->
+    <script>
+        let deferredPrompt;
+
+        // Handle PWA installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show the install button
+            const installButton = document.querySelector('#install-button');
+            if (installButton) {
+                installButton.style.display = 'block';
+                installButton.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`User response to the install prompt: ${outcome}`);
+                        deferredPrompt = null;
+                        installButton.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.error('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/rss.js"></script>
+    <script type="module" src="js/main.js"></script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 shadow-md mt-8">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <p class="text-sm text-gray-400">© 2025 RYTHMIC News. All rights reserved.</p>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-gray-400 hover:text-gray-300">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-gray-300">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-gray-300">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
